@@ -125,12 +125,29 @@ rm ubi-nginx-flattened.tar
 
 ## Moving images across hosts
 ```bash
-# save one or more images to a tar file
-podman save localhost/ubi-nginx:latest > export-image-ubi-nginx.tar
+# Save one or more images to a tar file
+podman save localhost/ubi-nginx:latest > /tmp/export-image-ubi-nginx.tar
 
-# load an image from a tar file
-podman load < export-image-ubi-nginx.tar
+# Load an image from a tar file
+podman load < /tmp/export-image-ubi-nginx.tar
+
+# Alternative: Load and tag in one command
+podman load < /tmp/export-image-ubi-nginx.tar
+
+# If you need to tag the loaded image with a different name
+podman tag localhost/ubi-nginx:latest my-registry.com/ubi-nginx:v1.0
+
+# Check the loaded image
+podman image ls | grep ubi-nginx
+
+# Clean up the tar file after loading
+rm /tmp/export-image-ubi-nginx.tar
 ```
+
+**Note:** 
+- Always store tar files in `/tmp` or use absolute paths to avoid committing large files to git
+- Tar files can be very large (200MB+) and should not be committed to version control
+- Use `.gitignore` to exclude `*.tar` files from git tracking
 
 ## Docker content trust
 
