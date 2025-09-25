@@ -141,7 +141,6 @@ export DOCKER_CONTENT_TRUST=1
 ```
 
 # docker filter
-
 ```
 docker image ls --filter "dangling=false"
 ```
