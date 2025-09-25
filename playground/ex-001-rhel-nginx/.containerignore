@@ -1,0 +1,8 @@
+# Container ignore file
+.git/
+.gitignore
+README.md
+*.md
+.DS_Store
+Thumbs.db
+*.log
