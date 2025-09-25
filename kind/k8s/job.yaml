@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: simple-backup-job
+  namespace: system1
+  labels:
+    app: backup-job
+spec:
+  ttlSecondsAfterFinished: 3600  # Clean up after 1 hour
+  backoffLimit: 3  # Retry up to 3 times on failure
+  template:
+    metadata:
+      labels:
+        app: backup-job
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: backup-container
+        image: busybox:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Starting backup job at $(date)"
+          echo "Backing up application data..."
+          sleep 10
+          echo "Creating backup archive..."
+          tar -czf /tmp/backup-$(date +%Y%m%d-%H%M%S).tar.gz /etc/hostname
+          echo "Backup completed successfully at $(date)"
+          ls -la /tmp/backup-*.tar.gz

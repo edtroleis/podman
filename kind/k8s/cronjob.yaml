@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: simple-maintenance-cronjob
+  namespace: system1
+  labels:
+    app: maintenance-job
+spec:
+  schedule: "*/2 * * * *"  # Run every 2 minutes
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 1800  # Clean up after 30 minutes
+      template:
+        metadata:
+          labels:
+            app: maintenance-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: maintenance-container
+            image: busybox:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Starting maintenance job at $(date)"
+              echo "Checking system health..."
+              
+              # Simulate health checks
+              echo "- Checking disk space..."
+              df -h | head -5
+              
+              echo "- Checking memory usage..."
+              free -m
+              
+              echo "- Checking processes..."
+              ps aux | head -5
+              
+              echo "- Cleaning temporary files..."
+              rm -rf /tmp/temp-* 2>/dev/null || true
+              
+              echo "Maintenance completed at $(date)"
+              echo "Next run scheduled in 2 minutes"
+  concurrencyPolicy: Forbid  # Don't allow concurrent runs
+  successfulJobsHistoryLimit: 3  # Keep 3 successful jobs
+  failedJobsHistoryLimit: 1      # Keep 1 failed job
