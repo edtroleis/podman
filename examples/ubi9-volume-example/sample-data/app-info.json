@@ -1,0 +1,19 @@
+{
+    "application": {
+        "name": "UBI9 Volume Example",
+        "version": "1.0.0",
+        "description": "Demonstrates volume usage with UBI 9 and Podman"
+    },
+    "volumes": {
+        "data": "/app/data",
+        "logs": "/app/logs", 
+        "config": "/app/config"
+    },
+    "features": [
+        "Persistent storage",
+        "Non-root execution",
+        "Configuration management",
+        "Log rotation support"
+    ],
+    "created": "2025-09-25"
+}
