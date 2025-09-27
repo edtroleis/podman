@@ -20,7 +20,12 @@ Image vs Container:
 - Build image
 ```bash
   cd ./playground/ex-001-rhel-nginx
+
+  # create image
   podman build -t ubi-nginx:latest .
+
+  # create image without using cache
+  podman build -t ubi-nginx:latest . --no-cache 
 ```
 
 ### Show images
@@ -30,7 +35,7 @@ Image vs Container:
 
 ### Run container
 ```bash
-  podman run -d -p 8080:8080 --name ubi-nginx-container ubi-nginx:latest
+  podman container run -d -p 8080:8080 --name ubi-nginx-container ubi-nginx:latest
 ```
 - Show running containers
 ```bash
@@ -183,6 +188,11 @@ podman search --limit 5 python
 
 # Logout from registry
 podman logout docker.io
+```
+
+# Filter images
+```
+podman image ls --filter "dangling=false"
 ```
 
 ## Best Practices

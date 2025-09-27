@@ -17,7 +17,32 @@ podman container run -it registry.access.redhat.com/ubi9/ubi:latest /bin/bash
 podman container run --rm -it registry.access.redhat.com/ubi9/ubi:latest /bin/bash
 
 # create and run a container as a daemon (background). Old version -> podman run -d
-podman container run -d ubi-nginx:latest
+podman container run -d -p 8080:8080 --name ubi-nginx-container ubi-nginx:latest
+
+# create and run a container with bind volume mount
+mkdir -p ./nginx-content
+echo '<h1>Custom Content</h1>' > ./nginx-content/index.html
+podman container run -d -p 8080:8080 --name ubi-nginx-container \
+  -v $(pwd)/nginx-content:/usr/share/nginx/html:Z \
+  ubi-nginx:latest
+
+# create and run a container with multiple bind volumes
+podman container run -d -p 8080:8080 --name ubi-nginx-container \
+  -v $(pwd)/nginx-content:/usr/share/nginx/html:Z \
+  -v $(pwd)/nginx-logs:/var/log/nginx:Z \
+  ubi-nginx:latest
+
+# create a container and set resource limit to the container
+podman container run -d -p 8080:8080 -m 128M --cpus 0.5 --name ubi-nginx-container ubi-nginx:latest
+
+# execute a command in a running container
+podman container exec -ti ubi-nginx-container /bin/bash
+
+# only create the container
+podman container create registry.access.redhat.com/ubi9/ubi:latest
+
+
+
 
 # stop all running containers
 podman container stop --all
@@ -36,6 +61,80 @@ podman container run -d -p 8080:80 apache:1.0.0       # run container and attach
 podman container run -it -P                           # run container using container expose port and attach with host random port
 ```
 
+### Remove all containers (various methods)
+```bash
+podman container rm --all                    # remove all stopped containers
+podman container stop --all                  # stop all running containers first
+podman container rm --all --force            # force remove all containers (running and stopped)
+podman container prune                       # remove all stopped containers
+podman system prune                          # remove all unused containers, networks, images (with prompt)
+podman system prune --all --force            # remove everything unused without prompt
+```
+
+## Volume Mounting
+
+### Bind Volumes
+```bash
+# Prepare content directory
+mkdir -p ./nginx-content
+echo '<h1>Hello from Bind Volume!</h1>' > ./nginx-content/index.html
+
+# Basic bind volume mount
+podman container run -d -p 8080:8080 --name web-server \
+  -v $(pwd)/nginx-content:/usr/share/nginx/html:Z \
+  ubi-nginx:latest
+
+# Bind mount with different host paths
+podman container run -d -p 8080:8080 --name web-server \
+  -v /home/user/content:/usr/share/nginx/html:Z \
+  ubi-nginx:latest
+
+# Read-only bind mount
+podman container run -d -p 8080:8080 --name web-server \
+  -v $(pwd)/nginx-content:/usr/share/nginx/html:ro,Z \
+  ubi-nginx:latest
+
+# Multiple bind mounts
+mkdir -p ./nginx-logs ./nginx-config
+podman container run -d -p 8080:8080 --name web-server \
+  -v $(pwd)/nginx-content:/usr/share/nginx/html:Z \
+  -v $(pwd)/nginx-logs:/var/log/nginx:Z \
+  -v $(pwd)/nginx-config:/etc/nginx/conf.d:ro,Z \
+  ubi-nginx:latest
+```
+
+### Named Volumes
+```bash
+# Create a named volume
+podman volume create nginx-data
+
+# Use named volume
+podman container run -d -p 8080:8080 --name web-server \
+  -v nginx-data:/usr/share/nginx/html \
+  ubi-nginx:latest
+
+# Multiple named volumes
+podman volume create nginx-data nginx-logs nginx-config
+podman container run -d -p 8080:8080 --name web-server \
+  -v nginx-data:/usr/share/nginx/html \
+  -v nginx-logs:/var/log/nginx \
+  -v nginx-config:/etc/nginx/conf.d \
+  ubi-nginx:latest
+```
+
+### Mount Options
+```bash
+# :Z - Relabel shared volume content to match the container's SELinux context
+# :z - Relabel private volume content to match the container's SELinux context  
+# :ro - Read-only mount
+# :rw - Read-write mount (default)
+
+# Example with all options
+podman container run -d -p 8080:8080 --name web-server \
+  -v /tmp/data:/app/data:rw,Z \
+  -v /tmp/config:/app/config:ro,Z \
+  ubi-nginx:latest
+```
 
 ## Advanced Operations
 ```bash
