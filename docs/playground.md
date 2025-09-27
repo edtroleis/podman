@@ -1,10 +1,10 @@
 # Playground
-- [Images and Containers](./podman-images-containers.md)
-- [Images - Advanced](./podman-images-advanced.md)
-- [Containers - Advanced](./podman-containers-advanced.md)
-- [Volumes](./podman-volumes.md)
+- [Images and Containers](./images-containers.md)
+- [Images - Advanced](./images-advanced.md)
+- [Containers - Advanced](./containers-advanced.md)
+- [Volumes](./volumes.md)
 - [Podman compose](./podman-compose.md)
-- [Local registry](./podman-local-registry.md)
+- [Local registry](./local-registry.md)
 - [Podman Desktop Kind cluster accessible from WSL2](./docs/podman_desktop_kind_accessible_wsl.md)
 - [WSL Kind](./docs/WSL-kind.md)
 
