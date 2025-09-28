@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bind Mount Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); }
+        .highlight { background: rgba(255,255,0,0.3); padding: 2px 8px; border-radius: 4px; }
+        .demo-box { background: rgba(255,255,255,0.2); padding: 20px; margin: 20px 0; border-radius: 10px; }
+        h1 { font-size: 2.5em; margin-bottom: 0.5em; }
+        .edit-instruction { background: rgba(0,255,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(0,255,0,0.5); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Bind Mount Example</h1>
+        
+        <div class="demo-box">
+            <h2>📁 Direct Host Filesystem Access</h2>
+            <p>This content is <span class="highlight">directly mounted</span> from the host filesystem!</p>
+            <p>Path: <code>/path/to/host/content → /var/www/html</code></p>
+        </div>
+        
+        <div class="edit-instruction">
+            <h3>🔧 Try This:</h3>
+            <ol>
+                <li>Edit this HTML file on your host system</li>
+                <li>Save the changes</li>
+                <li>Refresh this page to see changes <strong>immediately</strong></li>
+                <li>No container restart required!</li>
+            </ol>
+        </div>
+        
+        <div class="demo-box">
+            <h3>✨ Benefits of Bind Mounts:</h3>
+            <ul>
+                <li>🔄 <strong>Real-time updates</strong> - Changes reflect immediately</li>
+                <li>💾 <strong>Direct access</strong> - Files accessible on host</li>
+                <li>🛠️ <strong>Development friendly</strong> - Perfect for source code</li>
+                <li>⚡ <strong>No copying overhead</strong> - Direct filesystem access</li>
+            </ul>
+        </div>
+        
+        <div class="demo-box">
+            <p><strong>🕐 Last modified:</strong> <span id="timestamp"></span></p>
+            <script>
+                document.getElementById('timestamp').innerText = new Date().toLocaleString();
+            </script>
+        </div>
+        
+        <p><em>💡 This is a live demonstration of Podman bind mounts in action!</em></p>
+    </div>
+</body>
+</html>

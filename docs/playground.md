@@ -1,4 +1,15 @@
 # Playground
+- [Running a simple container - Hello World](./simple-container.md)
+- [Running a web server container - Nginx](./web-server-container.md)
+- [Use volumes](use-volumes.md)
+- [Complete stacks with multiple containers](use-multiple-containers.md)
+- [Use Podman compose](use-podman-compose.md)
+- [Use local registry](use-local-registry.md)
+- [Use Podman Desktop with Kind cluster accessible from WSL2](use-podman-desktop-wsl2.md)
+
+
+
+# Guides
 - [Images and Containers](./images-containers.md)
 - [Images - Advanced](./images-advanced.md)
 - [Containers - Advanced](./containers-advanced.md)

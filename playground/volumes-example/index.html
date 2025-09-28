@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Podman Volumes Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .info { background: #e3f2fd; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #2196f3; }
+        .volume-type { background: #f3e5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        h1 { color: #1976d2; }
+        h2 { color: #424242; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐳 Podman Volumes Demo</h1>
+        
+        <div class="info">
+            <h2>📁 Volume Information</h2>
+            <p><strong>Web Content:</strong> This page is served from a volume</p>
+            <p><strong>Logs:</strong> Nginx logs are stored in a named volume</p>
+            <p><strong>Configuration:</strong> Nginx config is mounted from host</p>
+        </div>
+        
+        <div class="volume-type">
+            <h3>🏷️ Named Volumes</h3>
+            <p>Managed by Podman, stored in: <code>/var/lib/containers/storage/volumes/</code></p>
+            <p>Perfect for: Application data, databases, logs</p>
+        </div>
+        
+        <div class="volume-type">
+            <h3>🔗 Bind Mounts</h3>
+            <p>Direct mapping from host filesystem to container</p>
+            <p>Perfect for: Development, configuration files, source code</p>
+        </div>
+        
+        <div class="volume-type">
+            <h3>💾 tmpfs Mounts</h3>
+            <p>Temporary filesystem in memory</p>
+            <p>Perfect for: Temporary data, caches, sensitive information</p>
+        </div>
+        
+        <p><strong>📊 This demonstrates how Podman volumes work with persistent storage!</strong></p>
+        
+        <div class="info">
+            <h3>🧪 Test Commands</h3>
+            <p>• Health check: <code>curl http://localhost:8080/health</code></p>
+            <p>• View logs: <code>podman logs &lt;container-name&gt;</code></p>
+            <p>• Inspect volumes: <code>podman volume inspect &lt;volume-name&gt;</code></p>
+        </div>
+    </div>
+</body>
+</html>
