@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nginx App with UBI9</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 10px;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #007acc;
+            margin: 20px 0;
+        }
+        .status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .status-item {
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .status-nginx {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-db {
+            background-color: #cce7ff;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Nginx App</h1>
+        
+        <div class="info">
+            <h3>🚀 Application Information</h3>
+            <p><strong>Base Image:</strong> UBI9 (Red Hat Universal Base Image 9)</p>
+            <p><strong>Web Server:</strong> Nginx</p>
+            <p><strong>Database:</strong> PostgreSQL</p>
+            <p><strong>Container Platform:</strong> Podman</p>
+        </div>
+
+        <div class="status">
+            <div class="status-item status-nginx">
+                <h4>Nginx Status</h4>
+                <p>✅ Running</p>
+                <p>Port: 8080</p>
+            </div>
+            <div class="status-item status-db">
+                <h4>Database Status</h4>
+                <p>✅ Connected</p>
+                <p>Port: 5432</p>
+            </div>
+        </div>
+
+        <div class="info">
+            <h3>📋 Features</h3>
+            <ul>
+                <li>Custom Nginx configuration with security headers</li>
+                <li>PostgreSQL database with initialization scripts</li>
+                <li>Persistent volumes for data and logs</li>
+                <li>Network isolation with custom bridge</li>
+                <li>Health check endpoint at <a href="/health">/health</a></li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <h3>🔧 Configuration</h3>
+            <p>This application demonstrates a complete containerized setup using:</p>
+            <ul>
+                <li><code>docker-compose.yml</code> - Service orchestration</li>
+                <li><code>nginx/Dockerfile</code> - Custom Nginx image based on UBI9</li>
+                <li><code>postgres/Dockerfile</code> - Custom PostgreSQL image based on UBI9</li>
+                <li><code>config/</code> directory - External configuration files mounted as volumes</li>
+                <li><code>init/</code> directory - Database initialization scripts</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
