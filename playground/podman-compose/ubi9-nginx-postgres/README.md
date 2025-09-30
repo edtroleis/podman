@@ -8,7 +8,7 @@ This project demonstrates a complete containerized application setup using Podma
 
 When using `podman-compose`, containers are managed differently than standalone podman containers. Here are the correct commands to check and manage your containers:
 
-**✅ Recommended Commands:**
+**Recommended Commands:**
 ```bash
 # Check container status (preferred method)
 podman-compose ps
@@ -27,7 +27,7 @@ podman-compose down
 podman-compose restart
 ```
 
-**⚠️ Note:** Regular `podman ps` may not show podman-compose containers due to different storage contexts or remote service configuration. Always use `podman-compose ps` for reliable container status.
+**Note:** Regular `podman ps` may not show podman-compose containers due to different storage contexts or remote service configuration. Always use `podman-compose ps` for reliable container status.
 
 ## Architecture
 
@@ -248,16 +248,16 @@ podman-compose up --build -d
 # Database: localhost:5432 (user: postgres for admin, appuser/apppass for app)
 ```
 
-## Current Status ✅
+## Current Status
 
 This setup has been tested and verified working with:
-- ✅ **Nginx Container**: Successfully running and serving content on port 8080
-- ✅ **PostgreSQL Container**: Successfully running PostgreSQL 15 on port 5432
-- ✅ **Database Initialization**: Custom database `appdb` and user `appuser` created
-- ✅ **UBI9 Base Images**: Both services built on Red Hat UBI9 without subscription
-- ✅ **Network Connectivity**: Services properly networked and accessible
-- ✅ **Configuration Management**: All configs externalized and working
-- ✅ **Persistent Storage**: Data volumes working correctly
+- **Nginx Container**: Successfully running and serving content on port 8080
+- **PostgreSQL Container**: Successfully running PostgreSQL 15 on port 5432
+- **Database Initialization**: Custom database `appdb` and user `appuser` created
+- **UBI9 Base Images**: Both services built on Red Hat UBI9 without subscription
+- **Network Connectivity**: Services properly networked and accessible
+- **Configuration Management**: All configs externalized and working
+- **Persistent Storage**: Data volumes working correctly
 
 **Test Commands:**
 ```bash
