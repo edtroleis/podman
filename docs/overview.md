@@ -1,6 +1,6 @@
 # Overview
 
-[← Back to Playground](../playground.md)
+[← Back to main page](./../README.md)
 
 Podman is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
 
@@ -42,4 +42,4 @@ Compatible with Docker images and Dockerfiles
 
 Podman represents the next generation of container technology, focusing on security, simplicity, and standards compliance while maintaining Docker compatibility for easy migration! 
 
-[← Back to Playground](../playground.md)
+[← Back to main page](./../README.md)

@@ -1,8 +1,55 @@
-# Advanced images
+# Images - Advanced
 
-## Dockerfile
+[← Back to User Guide](./user-guide.md)
+
+## Dockerfile - basics structure
 
 Dockerfile is a text file wich contains instructions and commands to create a Docker image.
+
+### Exemple Dockerfile
+
+```dockerfile
+# Use UBI9 as base image
+FROM registry.access.redhat.com/ubi9/ubi:latest
+
+# Metadata
+LABEL maintainer="Your Name <your.email@example.com>"
+LABEL version="1.0"
+LABEL description="A simple Nginx web server with volumes for logs and content"
+
+# Set build arguments
+ARG NGINX_VERSION=1.20.1
+
+# Set environment variables
+ENV NGINX_VERSION=${NGINX_VERSION}
+ENV NGINX_HOME=/etc/nginx
+ENV PATH=$PATH:/usr/sbin:$NGINX_HOME/sbin
+
+# Install nginx
+RUN dnf update -y && \
+    dnf install -y nginx && \
+    dnf clean all
+
+# Create directories for volumes
+RUN mkdir -p /var/log/nginx /var/www/html /etc/nginx/conf.d
+
+# Set proper permissions (nginx user already exists in UBI9)
+RUN chown -R nginx:nginx /var/log/nginx /var/www/html && \
+    chmod 755 /var/www/html
+
+# Copy default page
+COPY config/index.html /var/www/html/
+
+# Here we set a check every 30 seconds, if the health check command does not respond for more than 3 seconds, it is considered a failure, and use "curl -fs http://localhost/ || exit 1" as a health check command.
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -fs http://localhost:8080 || exit 1
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+```
 
 ### FROM
 indicates which image will be used as a base. This property must be the first line of the Dockerfile
@@ -63,14 +110,14 @@ The ENTRYPOINT instruction looks almost similar to the CMD instruction. However,
 
 When we have specified the ENTRYPOINT instruction in the executable form, it allows us to set or define some additional arguments/parameters using the CMD instruction in Dockerfile. If we have used it in the shell form, it will ignore any of the CMD parameters or even any CLI arguments.
 
-```bash
+```dockerfile
 ENTRYPOINT echo "Command in Shell Form"
 ENTRYPOINT ["/bin/bash", "-c", "echo Command in Exec Form"]
 ```
 
 If you use ENTRYPOINT and CMD in the same Dockerfile you must use both commands with exec form
 
-```bash
+```dockerfile
 ENTRYPOINT ["COMMAND1"]
 CMD ["COMMAND2"]
 ```
@@ -78,7 +125,7 @@ CMD ["COMMAND2"]
 ### CMD vs ENTRYPOINT
 Using a CMD command, you will be able to set a default command. This will be executed if you run a particular container without specifying some command. In case you specify a command while running a docker container, the default one will be ignored. Note that if you specify more than one CMD instruction in your dockerfile, only the last one will be executed.
 
-```bash
+```dockerfile
 CMD <command> parameter1, parameter2 …. (Shell form)
 CMD [“executable command”, “parameter1”, “parameter2”, ….] (executable form)
 CMD [“parameter1”, “parameter2”]
@@ -88,7 +135,7 @@ The third way is used to set some additional default parameters. That will be in
 
 Consider the command below inside a dockerfile.
 
-```bash
+```dockerfile
 CMD echo “Simple-Tutorial”
 ```
 
@@ -98,7 +145,7 @@ If you run it by specifying CLI arguments (docker run -it image_name /bin/bash),
 
 ENTRYPOINT looks similar to a CMD command. However, the difference is that it does not ignore the parameters when you run a container with CLI parameters. The two forms of ENTRYPOINT command are:
 
-```bash
+```dockerfile
 # shell form
 ENTRYPOINT <command> parameter1, parameter2, …
 
@@ -110,7 +157,7 @@ When you use an executable form of ENTRYPOINT command, it will allow you to set 
 
 Consider the example below.
 
-```bash
+```dockerfile
 ENTRYPOINT [“/bin/echo”, “ENTRYPOINT_INSTRUCTION”]
 CMD [“CMD_INSTRUCTION”]
 ```
@@ -129,19 +176,91 @@ It informs Docker that the container listens on the specified network port at ru
 
 It allows to tell the plataform on how to test that our application is healthy. When Docker starts a container, it monitors the process that the container runs. If the process ends, the container exits. That's just a basic check and does not necessarily tell the detail about the application.
 
-```bash
+```dockerfile
 --interval=DURATION      # default 30s
 --timeout=DURATION       # default 30s
 --start-period=DURATION  # default 0s
 --retries=N              # default 3
 ```
 
-```bash
+```dockerfile
 # Example: HEALTHCHECK every 60 seconds, timeout after 3 seconds, start checking immediately, and consider the container unhealthy after 3 consecutive failures
 HEALTHCHECK --interval=60s --timeout=3s --start-period=0 --retries=3 CMD curl -f http://localhost/ exit 1
 ```
 
-
 ## Multi-stage builds
 
-https://docs.docker.com/build/building/multi-stage/
+- Multi-stage builds allow you to use multiple FROM statements in your Dockerfile to create optimized, smaller final images by separating the build environment from the runtime environment.
+
+- Benefits of Multi-Stage Builds
+  - Smaller final images - Only runtime dependencies included
+  - Security - Build tools and source code not in production image
+  - Efficiency - Faster deployments and reduced attack surface
+  - Clean separation - Build vs runtime environments
+
+- For more information on multi-stage builds, check the official Docker [documentation](https://docs.docker.com/build/building/multi-stage/)
+
+### Example Multi-Stage Dockerfile for a Go Application
+
+```dockerfile
+# Stage 1: Build Environment
+FROM registry.access.redhat.com/ubi9/go-toolset:latest AS builder
+
+# Metadata for build stage
+LABEL stage="build"
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Set environment variables for build
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+# Build the application
+RUN go mod download && \
+    go build -a -installsuffix cgo -o main .
+
+# Stage 2: Runtime Environment  
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest AS runtime
+
+# Metadata for final image
+LABEL maintainer="Your Name <your.email@example.com>"
+LABEL version="1.0"
+LABEL description="Go application with multi-stage build"
+
+# Install only runtime dependencies
+RUN microdnf update -y && \
+    microdnf install -y ca-certificates && \
+    microdnf clean all
+
+# Create non-root user
+RUN useradd -r -u 1001 appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy only the binary from builder stage
+COPY --from=builder /app/main .
+
+# Change ownership to non-root user
+RUN chown appuser:appuser /app/main
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Run the application
+CMD ["./main"]
+```
+
+[← Back to User Guide](./user-guide.md)

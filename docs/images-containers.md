@@ -1,4 +1,15 @@
 # Images and Containers
+
+[← Back to User Guide](./user-guide.md)
+
+## Table of Contents
+- [Overview](#overview)
+- [Create a Podman image](#create-a-podman-image)
+- [Working with Images and Containers](#working-with-images-and-containers)
+- [Best Practices](#best-practices)
+
+## Overview
+
 Build once, use anywhere.
 
 Podman image is a file which contains all necessary dependency and configurations which are required to run application
@@ -15,167 +26,154 @@ Image vs Container:
 - Image: The blueprint/template (like a class in programming)
 - Container: Running instance of an image (like an object)
 
-### Create a Podman image
-- [Dockerfile](../playground/ex-001-rhel-nginx/Dockerfile)
-- Build image
-```bash
-  cd ./playground/ex-001-rhel-nginx
+## Working with Images and Containers
 
+### Create a Podman image
+
+```bash
   # create image
-  podman build -t ubi-nginx:latest .
+  podman build -t ImageName:Tag .
 
   # create image without using cache
-  podman build -t ubi-nginx:latest . --no-cache 
+  podman build -t ImageName:Tag . --no-cache
 ```
 
 ### Show images
 ```bash
   podman image ls
+  podman image ls | grep ImageName:Tag
 ```
 
-### Run container
+### Run a container
 ```bash
-  podman container run -d -p 8080:8080 --name ubi-nginx-container ubi-nginx:latest
+  podman container run -d -p PortFromMyComputer:PortContainer --name ContainerName ImageName:Tag
+
+  podman container run -d -p 8080:80 --name ContainerName ImageName:Tag
 ```
-- Show running containers
+
+### Show running containers
 ```bash
-  podman ps
+  podman container ls
+  podman container ls -a
 ```
 
-- Stop container
+### Stop containers
 ```bash
-podman stop ubi-nginx-container
+podman container stop ContainerName
 ```
 
-- Remove container
+### Remove containers
 ```bash
-podman rm ubi-nginx-container
-```
+podman container rm ContainerName
 
-# View nginx page (running container)
-```
-curl http://localhost:8080
-
-# For browser access, open:
-# http://localhost:8080
+podman container rm -f ContainerName   # force remove
 ```
 
 ### Remove images
-
 ```bash
 # Remove by specific image
-podman image rm ubi-nginx:latest
+podman image rm ImageName:Tag
 
 # Remove by image ID
 podman image rm abc123def456
 
-# Remove by specific image
-podman rmi ubi-nginx:latest
-
-# Remove by image ID
-podman rmi abc123def456
+# Force removal (even if containers are using it)
+podman image rm -f ImageName:Tag
 
 # Remove unused images
 podman image prune
 
 # Remove all unused images (dangling and unused)
 podman image prune -a
-
-# Force removal (even if containers are using it)
-podman rmi -f myapp:latest
 ```
 
-## Inspect images and details
+### Inspect images and details
 ```bash
 # Show layer hierarchy in tree format
-podman image tree localhost/ubi-nginx:latest
+podman image tree localhost/ImageName:Tag
 
 # Show history/layers with commands that created them
-podman image history localhost/ubi-nginx:latest
+podman image history localhost/ImageName:Tag
 
 # Show layer SHA256 hashes
-podman image inspect localhost/ubi-nginx:latest --format='{{.RootFS.Layers}}'
+podman image inspect localhost/ImageName:Tag --format='{{.RootFS.Layers}}'
 
 # Inspect full image metadata in JSON
-podman image inspect localhost/ubi-nginx:latest --format='{{json .RootFS}}'
-podman image inspect localhost/ubi-nginx:latest
-podman image inspect localhost/ubi-nginx:latest --format='{{.Id}}'
-podman image inspect localhost/ubi-nginx:latest --format='{{json .Config}}'
-podman image inspect localhost/ubi-nginx:latest --format='{{.Config.User}}'
-podman image inspect localhost/ubi-nginx:latest --format='{{.Config.ExposedPorts}}'
+podman image inspect localhost/ImageName:Tag --format='{{json .RootFS}}'
+podman image inspect localhost/ImageName:Tag
+podman image inspect localhost/ImageName:Tag --format='{{.Id}}'
+podman image inspect localhost/ImageName:Tag --format='{{json .Config}}'
+podman image inspect localhost/ImageName:Tag --format='{{.Config.User}}'
+podman image inspect localhost/ImageName:Tag --format='{{.Config.ExposedPorts}}'
 
 # Get detailed about digests
 podman images --digests
 ```
 
-## Tagging Images
+### Tagging Images
 ```bash
 # Create additional tag for existing image
-podman tag localhost/ubi-nginx:latest registry.example.com/ubi-nginx:latest:1.0.0
+podman tag localhost/ImageName:Tag registry.example.com/ImageName:1.0.0
 ```
 
-## Pushing Images
+### Pushing Images
 ```bash
 # Push to registry (requires login)
 podman login registry.example.com
-podman push registry.example.com/ubi-nginx:latest
-
-# Push to Docker Hub
-podman login docker.io
-podman push docker.io/username/ubi-nginx:latest
+podman push registry.example.com/ImageName:Tag
 ```
 
-## Flattening Podman images
+### Flattening Podman images
 
 ```bash
 # Create and run a container from the image
-podman run --name ubi-nginx-temp localhost/ubi-nginx:latest
+podman run --name ContainerName localhost/ImageName:Tag
 
 # Export the container to a tar file (flattens all layers)
-podman export ubi-nginx-temp > ubi-nginx-flattened.tar
+podman export ContainerName > Export-ContainerName.tar
 
 # Verify the tar file
-ls -lh ubi-nginx-flattened.tar
+ls -lh Export-ContainerName.tar
 
 # Import the tar file as a new image
-cat ubi-nginx-flattened.tar | podman import - my-ubi-nginx:latest
+cat Export-ContainerName.tar | podman import - My-ImageName:Tag
 
 # Verify the new flattened image
-podman image ls | grep -E "(ubi-nginx|my-ubi-nginx)"
+podman image ls | grep -E "(ImageName|My-ImageName)"
 
 # Compare the image trees of the original and flattened images
-podman image tree ubi-nginx:latest
-podman image tree my-ubi-nginx:latest
+podman image tree ImageName:Tag
+podman image tree My-ImageName:Tag
 
 # Clean up the temporary container
-podman stop ubi-nginx-temp && podman rm ubi-nginx-temp
+podman stop ContainerName && podman rm ContainerName
 
 # Remove the tar file if no longer needed
-rm ubi-nginx-flattened.tar
+rm Export-ContainerName.tar
 ```
 
-## Images import/export
+### Images import/export
 ```bash
 # Save one or more images to a tar file
-podman save localhost/ubi-nginx:latest > /tmp/export-image-ubi-nginx.tar
+podman save localhost/ImageName:tag > /tmp/Export-ImageName.tar
 
 # Load an image from a tar file
-podman load < /tmp/export-image-ubi-nginx.tar
+podman load < /tmp/Export-ImageName.tar
 
 # Alternative: Load and tag in one command
-podman load < /tmp/export-image-ubi-nginx.tar
+podman load local/My-Import-ImageName:Tag < /tmp/Export-ImageName.tar
 
 # If you need to tag the loaded image with a different name
-podman tag localhost/ubi-nginx:latest my-registry.com/ubi-nginx:v1.0
+podman tag localhost/My-Import-ImageName:tag my-registry.com/New-ImageName:Tag
 
 # Check the loaded image
-podman image ls | grep ubi-nginx
+podman image ls | grep New-ImageName
 
 # Clean up the tar file after loading
-rm /tmp/export-image-ubi-nginx.tar
+rm /tmp/Export-ImageName.tar
 ```
 
-## Working with Image Registries
+### Working with Image Registries
 ```bash
 # Login to registry
 podman login docker.io
@@ -190,8 +188,8 @@ podman search --limit 5 python
 podman logout docker.io
 ```
 
-# Filter images
-```
+### Filter images
+```bash
 podman image ls --filter "dangling=false"
 ```
 
@@ -219,3 +217,5 @@ podman image ls --filter "dangling=false"
 - Use semantic versioning
 - Clean up old images regularly
 - Document image contents and usage
+
+[← Back to User Guide](./user-guide.md)
