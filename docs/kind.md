@@ -1,4 +1,7 @@
 # Podman Desktop - Kind cluster accessible from WSL2
+
+[← Back to Playground](../docs/playground.md)
+
 1. Create a Kind cluster in Podman Desktop (ensure it's running)
 2. To access the Kind cluster from WSL2 follow the steps below
 
@@ -86,3 +89,5 @@ kubectl get all --all-namespaces
 cd kind/scripts
 ./k8s-objects-cleanup.sh
 ```
+
+[← Back to Playground](../docs/playground.md)

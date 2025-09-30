@@ -1,6 +1,6 @@
 # Using Volumes in Podman
 
-[← Back to Playground](../playground.md)
+[← Back to Playground](../docs/playground.md)
 
 This guide demonstrates different types of volume usage in Podman with practical examples.
 
@@ -190,4 +190,4 @@ rm -rf bind-mount/
 podman image rm web-volume-demo
 ```
 
-[← Back to Playground](../playground.md)
+[← Back to Playground](../docs/playground.md)
