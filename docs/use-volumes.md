@@ -5,36 +5,9 @@
 This guide demonstrates different types of volume usage in Podman with practical examples.
 
 ## Table of Contents
-- [Why Use Volumes?](#why-use-volumes)
-- [Volume Types](#volume-types)
+- [Prerequisites](#prerequisites)
 - [Named Volumes Example](#named-volumes-example)
 - [Bind Mounts Example](#bind-mounts-example)
-
-## Why Use Volumes?
-1. Data Persistence
-Survive container lifecycle: Data persists even when containers are stopped, removed, or recreated
-Stateful applications: Essential for databases, logs, user data, and application state
-Updates and rollbacks: Maintain data integrity during application updates
-2. Data Sharing
-Multi-container access: Multiple containers can read/write to the same volume
-Microservices communication: Share data between different services
-Backup and restore: Centralized data management across container instances
-3. Performance Optimization
-Native filesystem: Better I/O performance compared to bind mounts
-Container layer bypass: Direct access to host storage without container filesystem overhead
-Reduced image size: Keep large datasets separate from container images
-4. Security and Isolation
-Controlled access: Podman manages volume permissions and SELinux contexts
-Isolation: Separate application logic from data storage
-Root/rootless compatibility: Works seamlessly in both execution modes
-
-## Volume Types
-
-Podman supports three main types of volume mounts:
-
-1. **Named Volumes**: Managed by Podman, stored in Podman's storage area
-2. **Bind Mounts**: Direct mapping from host filesystem to container
-3. **tmpfs Mounts**: Temporary filesystem in memory
 
 ## Prerequisites
 We use a simple Nginx web server application for demonstration. The application serves static HTML content and logs access requests.
