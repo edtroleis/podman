@@ -1,5 +1,5 @@
 # Podman
-- [Overview](./docs/overview.md)
-- [User guide](./docs/user-guide.md)
-- [Playground](./docs/playground.md)
+- [Overview about Podman](./docs/overview.md)
+- [User guide - Understanding Podman](./docs/user-guide.md)
+- [Playground - Experiment with Podman](./docs/playground.md)
 - [Installation and Configuration](./docs/install-configuration.md)
