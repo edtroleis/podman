@@ -151,12 +151,3 @@ echo "   Check status: ./k8s-objects-status.sh"
 echo "   View logs: kubectl logs -n system1 -l app=simple-app"
 echo "   Test application: curl http://localhost:9090"
 echo "   Cleanup: ./k8s-objects-cleanup.sh"
-
-
-
-
-
-
-
-
-
